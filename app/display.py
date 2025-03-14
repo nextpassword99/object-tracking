@@ -13,11 +13,11 @@ class Display:
         for detection in detection_result.detections:
             self._create_rectangle(detection, frame)
 
-    def _create_rectangle(detection, frame):
+    def _create_rectangle(self, detection, frame):
         bbox = detection.bounding_box
-        start_point = bbox.origin_x, bbox.origin_y
-        end_point = bbox.origin_x + bbox.width, bbox.origin_y + bbox.height
-        cv2.rectangle(frame, start_point, end_point, (255, 0, 0), 3)
+        start_point = (bbox.origin_x, bbox.origin_y)
+        end_point = (bbox.origin_x + bbox.width, bbox.origin_y + bbox.height)
+        cv2.rectangle(frame, start_point, end_point, (0, 255, 0), 2)
 
     def _create_labels(self, detection, frame, bbox):
         if not detection.categories:
