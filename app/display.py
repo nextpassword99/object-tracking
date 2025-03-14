@@ -51,4 +51,12 @@ class Display:
         )
 
     def display_video(self, frame):
-        cv2.imshow('Video', frame)
+        if frame is None:
+            return False
+
+        cv2.imshow(self.window_name, frame)
+        key = cv2.waitKey(1) & 0xFF
+        return key != 27
+
+    def close_windows(self):
+        cv2.destroyAllWindows()
