@@ -2,17 +2,23 @@ import numpy as np
 import mediapipe as mp
 from mediapipe.tasks import python as py
 from mediapipe.tasks.python import vision as vs
+import os
+import requests
 
 
 class Tracker:
-    def __init__(self):
+    def __init__(self, model_path='efficientdet_lite0.tflite'):
         self.detector = None
+        self.model_path = model_path
+        self.download_model()
+        self.configure_options()
 
-    def _configure_options(self):
-        base_options = py.BaseOptions(
-            model_asset_path='efficientdet_lite0.tflite')
+    def configure_options(self):
+        base_options = py.BaseOptions(model_asset_path=self.model_path)
         options = vs.ObjectDetectorOptions(
-            base_options, max_results=10, score_threshold=0.5)
+            base_options=base_options,
+            max_results=10,
+            score_threshold=0.5)
         self.detector = vs.ObjectDetector.create_from_options(options)
 
     def detect(self, frame):
