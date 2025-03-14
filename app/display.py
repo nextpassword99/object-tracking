@@ -4,14 +4,21 @@ import cv2
 
 class Display:
     def __init__(self):
-        pass
+        self.window_name = 'Video'
 
     def frame_to_mediapipe(self, frame):
-        return mp.Image.create_from_array(frame)
+        return mp.Image(image_format=mp.ImageFormat.SRGB, data=frame)
 
     def visualize(self, frame, detection_result):
+        if detection_result is None or not hasattr(detection_result, 'detections'):
+            return frame
+
         for detection in detection_result.detections:
             self._create_rectangle(detection, frame)
+            bbox = detection.bounding_box
+            self._create_labels(detection, frame, bbox)
+
+        return frame
 
     def _create_rectangle(self, detection, frame):
         bbox = detection.bounding_box
