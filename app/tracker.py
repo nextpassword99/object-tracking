@@ -7,7 +7,7 @@ import requests
 
 
 class Tracker:
-    def __init__(self, model_path='efficientdet_lite0.tflite'):
+    def __init__(self, model_path='data/models/efficientdet_lite0.tflite'):
         self.detector = None
         self.model_path = model_path
         self.download_model()
