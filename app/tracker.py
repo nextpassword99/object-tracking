@@ -16,4 +16,21 @@ class Tracker:
         self.detector = vs.ObjectDetector.create_from_options(options)
 
     def detect(self, frame):
-        result = self.detector.detect(frame)
+        result = self.detector.detect(mp_image)
+        return result
+
+    def download_model(self):
+        model_url = "https://storage.googleapis.com/mediapipe-models/object_detector/efficientdet_lite0/int8/1/efficientdet_lite0.tflite"
+        if not os.path.exists(self.model_path):
+            print("Descargando modelo...")
+            try:
+                response = requests.get(model_url)
+                response.raise_for_status()
+
+                with open(self.model_path, "wb") as f:
+                    f.write(response.content)
+
+                print(f"Modelo descargado: {self.model_path}")
+
+            except requests.exceptions.RequestException as e:
+                print(f"Error al descargar el modelo: {e}")
