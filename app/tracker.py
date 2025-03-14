@@ -16,6 +16,11 @@ class Tracker:
         self.detector = vs.ObjectDetector.create_from_options(options)
 
     def detect(self, frame):
+        if not isinstance(frame, mp.Image):
+            mp_image = mp.Image(image_format=mp.ImageFormat.SRGB, data=frame)
+        else:
+            mp_image = frame
+
         result = self.detector.detect(mp_image)
         return result
 
