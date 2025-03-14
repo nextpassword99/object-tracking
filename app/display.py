@@ -19,15 +19,36 @@ class Display:
         end_point = bbox.origin_x + bbox.width, bbox.origin_y + bbox.height
         cv2.rectangle(frame, start_point, end_point, (255, 0, 0), 3)
 
-    def _create_labels(detection, frame, bbox):
+    def _create_labels(self, detection, frame, bbox):
+        if not detection.categories:
+            return
+
         category = detection.categories[0]
         category_name = category.category_name
         probability = round(category.score, 2)
-        result_text = category_name + ' (' + str(probability) + ')'
-        text_location = (10 + bbox.origin_x,
-                         10 + 10 + bbox.origin_y)
-        cv2.putText(frame, result_text, text_location, cv2.FONT_HERSHEY_PLAIN,
-                    1, (255, 0, 0), 1)
+        result_text = f"{category_name} ({probability})"
+
+        text_location = (bbox.origin_x + 10, bbox.origin_y + 20)
+
+        text_size = cv2.getTextSize(
+            result_text, cv2.FONT_HERSHEY_SIMPLEX, 0.7, 2)[0]
+        cv2.rectangle(
+            frame,
+            (text_location[0] - 5, text_location[1] - text_size[1] - 5),
+            (text_location[0] + text_size[0] + 5, text_location[1] + 5),
+            (0, 0, 0),
+            -1
+        )
+
+        cv2.putText(
+            frame,
+            result_text,
+            text_location,
+            cv2.FONT_HERSHEY_SIMPLEX,
+            0.7,
+            (255, 255, 255),
+            2
+        )
 
     def display_video(self, frame):
         cv2.imshow('Video', frame)
