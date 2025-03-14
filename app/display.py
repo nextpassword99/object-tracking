@@ -1,10 +1,12 @@
 import mediapipe as mp
 import cv2
+import numpy as np
 
 
 class Display:
     def __init__(self):
         self.window_name = 'Video'
+        self.pose_connections = mp.solutions.pose.POSE_CONNECTIONS
 
     def frame_to_mediapipe(self, frame):
         return mp.Image(image_format=mp.ImageFormat.SRGB, data=frame)
@@ -56,6 +58,32 @@ class Display:
             (255, 255, 255),
             2
         )
+
+    def visualize_pose(self, frame, pose_result):
+        if pose_result is None or not hasattr(pose_result, 'pose_landmarks'):
+            return frame
+
+        annotated_frame = frame.copy()
+
+        if pose_result.pose_landmarks:
+            for pose_landmarks in pose_result.pose_landmarks:
+                self._draw_landmarks_and_connections(
+                    annotated_frame, pose_landmarks)
+
+        return annotated_frame
+
+    def _draw_landmarks_and_connections(self, frame, pose_landmarks):
+        h, w, _ = frame.shape
+        landmarks_px = []
+
+        for landmark in pose_landmarks:
+            landmarks_px.append((int(landmark.x * w), int(landmark.y * h)))
+
+        for connection in self.pose_connections:
+            start_idx, end_idx = connection
+            if start_idx < len(landmarks_px) and end_idx < len(landmarks_px):
+                cv2.line(frame, landmarks_px[start_idx], landmarks_px[end_idx],
+                         (255, 255, 255), 2)
 
     def display_video(self, frame):
         if frame is None:
